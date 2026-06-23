@@ -77,18 +77,32 @@ Password:
 ```http
 POST /accounts/{accountId}/transactions
 ```
+Endpoint:
+http://localhost:8082/accounts/acct-123/transactions
 
+Sample payload:
+
+{
+"eventId":"evt-002",
+"type":"DEBIT",
+"amount":50,
+"eventTimestamp":"2026-05-15T14:05:11Z"
+}
 ### Get Balance
 
 ```http
 GET /accounts/{accountId}/balance
 ```
+Endpoint:
+http://localhost:8082/accounts/acct-123/balance
 
 ### Get Account Details
 
 ```http
 GET /accounts/{accountId}
 ```
+Endpoint:
+http://localhost:8082/accounts/acct-123
 
 ### Health Check
 
