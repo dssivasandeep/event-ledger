@@ -12,4 +12,7 @@ public interface TransactionRepository
     List<TransactionEntity> findByAccountId(String accountId);
 
     boolean existsByEventId(String eventId);
+
+    List<TransactionEntity> findByAccountIdOrderByEventTimestampDesc(
+            String accountId);
 }

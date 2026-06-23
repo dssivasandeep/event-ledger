@@ -1,5 +1,6 @@
 package com.eventLedger.accountService.controller;
 
+import com.eventLedger.accountService.dto.AccountDetailsResponse;
 import com.eventLedger.accountService.dto.BalanceResponse;
 import com.eventLedger.accountService.dto.TransactionRequest;
 import com.eventLedger.accountService.service.AccountService;
@@ -26,5 +27,13 @@ public class AccountController {
             @PathVariable String accountId) {
 
         return accountService.getBalance(accountId);
+    }
+
+    @GetMapping("/{accountId}")
+    public AccountDetailsResponse getAccountDetails(
+            @PathVariable String accountId) {
+
+        return accountService.getAccountDetails(
+                accountId);
     }
 }

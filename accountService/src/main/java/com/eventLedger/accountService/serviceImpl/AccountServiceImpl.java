@@ -1,7 +1,9 @@
 package com.eventLedger.accountService.serviceImpl;
 
+import com.eventLedger.accountService.dto.AccountDetailsResponse;
 import com.eventLedger.accountService.dto.BalanceResponse;
 import com.eventLedger.accountService.dto.TransactionRequest;
+import com.eventLedger.accountService.dto.TransactionResponse;
 import com.eventLedger.accountService.entity.AccountEntity;
 import com.eventLedger.accountService.entity.TransactionEntity;
 import com.eventLedger.accountService.entity.TransactionType;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
 
@@ -71,4 +74,40 @@ public class AccountServiceImpl implements AccountService {
 
         return new BalanceResponse(accountId, balance);
     }
+
+    @Override
+    public AccountDetailsResponse getAccountDetails(
+            String accountId) {
+
+        List<TransactionEntity> transactions =
+                transactionRepository
+                        .findByAccountIdOrderByEventTimestampDesc(
+                                accountId);
+
+        BigDecimal balance = transactions.stream()
+                .map(tx ->
+                        tx.getType() == TransactionType.CREDIT
+                                ? tx.getAmount()
+                                : tx.getAmount().negate())
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        List<TransactionResponse> transactionResponses =
+                transactions.stream()
+                        .map(tx ->
+                                TransactionResponse.builder()
+                                        .eventId(tx.getEventId())
+                                        .type(tx.getType())
+                                        .amount(tx.getAmount())
+                                        .eventTimestamp(
+                                                tx.getEventTimestamp())
+                                        .build())
+                        .collect(Collectors.toList());
+
+        return AccountDetailsResponse.builder()
+                .accountId(accountId)
+                .balance(balance)
+                .transactions(transactionResponses)
+                .build();
+    }
+
 }
