@@ -8,14 +8,19 @@ import com.eventLedger.accountService.entity.TransactionType;
 import com.eventLedger.accountService.repository.AccountRepository;
 import com.eventLedger.accountService.repository.TransactionRepository;
 import com.eventLedger.accountService.service.AccountService;
+import com.eventLedger.accountService.trace.TraceContext;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
 
+import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
+
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AccountServiceImpl implements AccountService {
 
     private final AccountRepository accountRepository;
@@ -24,7 +29,11 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public void applyTransaction(String accountId,
                                  TransactionRequest request) {
-
+        log.info(
+                "Applying transaction event={} traceId={}",
+                request.getEventId(),
+                TraceContext.getTraceId()
+        );
         if (transactionRepository.existsByEventId(request.getEventId())) {
             return;
         }
