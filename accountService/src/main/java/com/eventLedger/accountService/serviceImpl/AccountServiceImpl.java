@@ -7,6 +7,7 @@ import com.eventLedger.accountService.dto.TransactionResponse;
 import com.eventLedger.accountService.entity.AccountEntity;
 import com.eventLedger.accountService.entity.TransactionEntity;
 import com.eventLedger.accountService.entity.TransactionType;
+import com.eventLedger.accountService.logging.LogUtil;
 import com.eventLedger.accountService.repository.AccountRepository;
 import com.eventLedger.accountService.repository.TransactionRepository;
 import com.eventLedger.accountService.service.AccountService;
@@ -32,6 +33,11 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public void applyTransaction(String accountId,
                                  TransactionRequest request) {
+        LogUtil.info(
+                "account-service",
+                "Applying transaction " + request.getEventId()
+        );
+
         log.info(
                 "Applying transaction event={} traceId={}",
                 request.getEventId(),
